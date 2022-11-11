@@ -15,6 +15,8 @@ import com.cintrix_1.entities.Billing;
 import com.cintrix_1.entities.Contact;
 import com.cintrix_1.services.BillingService;
 import com.cintrix_1.services.ContactService;
+import com.cintrix_1.util.EmailService;
+import com.cintrix_1.util.EmailUtil;
 import com.cintrix_1.util.PDFGenerator;
 
 @Controller
@@ -28,6 +30,9 @@ public class BillingController {
 	
 	@Autowired
 	private PDFGenerator pdfGenerator;
+	
+	@Autowired
+	private EmailUtil emailUtil;
 	
 	@GetMapping("/generateBill")
 	public String showBillingPage(@RequestParam("id") int id, Model model) {
@@ -58,6 +63,8 @@ public class BillingController {
 			billingService.saveBillDetails(b);
 			
 			pdfGenerator.generateItinerary(bill, filePath);
+			
+			emailUtil.sendItinerary(bill.getEmail(), filePath);
 			
 			model.addAttribute("msg", "Bill generated successfully!");
 			
